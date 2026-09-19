@@ -1,4 +1,4 @@
--- Roblox Freeze Trade Prank GUI (Optimized for Executors)
+-- Roblox Freeze Trade Visual Menu
 local Players = game:GetService("Players")
 local TweenService = game:GetService("TweenService")
 local SoundService = game:GetService("SoundService")
@@ -7,11 +7,11 @@ local LocalPlayer = Players.LocalPlayer
 local PlayerGui = LocalPlayer:WaitForChild("PlayerGui")
 
 -- Prevent duplicate GUIs from stacking
-if PlayerGui:FindFirstChild("TradeFreeze") then
+if PlayerGui:FindFirstChild("TradePrankScreen") then
     PlayerGui.TradePrankScreen:Destroy()
 end
 
--- Create ScreenGui inside PlayerGui for maximum executor compatibility
+-- Create ScreenGui inside PlayerGui
 local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Name = "TradePrankScreen"
 ScreenGui.Parent = PlayerGui
@@ -25,20 +25,19 @@ MainFrame.Position = UDim2.new(0.5, -160, 0.4, -120)
 MainFrame.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
 MainFrame.BorderSizePixel = 0
 MainFrame.Active = true
-MainFrame.Draggable = true -- Allows you to drag it around the screen
+MainFrame.Draggable = true 
 MainFrame.Parent = ScreenGui
 
--- Corner styling for Main Frame
 local MainCorner = Instance.new("UICorner")
 MainCorner.CornerRadius = UDim.new(0, 12)
 MainCorner.Parent = MainFrame
 
--- Animated Flashing Background (White/Black Sparkle Effect)
+-- Glow/Spark Effect Panel (Clean Mono Gradient)
 local BackgroundAnim = Instance.new("Frame")
 BackgroundAnim.Name = "BackgroundAnim"
 BackgroundAnim.Size = UDim2.new(1, -6, 1, -6)
 BackgroundAnim.Position = UDim2.new(0, 3, 0, 3)
-BackgroundAnim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
+BackgroundAnim.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
 BackgroundAnim.BorderSizePixel = 0
 BackgroundAnim.ZIndex = 1
 BackgroundAnim.Parent = MainFrame
@@ -47,19 +46,19 @@ local AnimCorner = Instance.new("UICorner")
 AnimCorner.CornerRadius = UDim.new(0, 10)
 AnimCorner.Parent = BackgroundAnim
 
--- Title Text
+-- Title Text (Simplified as requested)
 local Title = Instance.new("TextLabel")
 Title.Name = "Title"
 Title.Size = UDim2.new(1, 0, 0, 40)
 Title.BackgroundTransparency = 1
-Title.Text = "FREEZE TRADE PRANK v1.0"
+Title.Text = "FREEZE TRADE v1.0"
 Title.TextColor3 = Color3.fromRGB(255, 255, 255)
 Title.Font = Enum.Font.GothamBold
 Title.TextSize = 18
 Title.ZIndex = 2
 Title.Parent = MainFrame
 
--- Status Label (Shows "Successfully" text)
+-- Status Label
 local StatusLabel = Instance.new("TextLabel")
 StatusLabel.Name = "StatusLabel"
 StatusLabel.Size = UDim2.new(1, 0, 0, 30)
@@ -72,7 +71,7 @@ StatusLabel.TextSize = 14
 StatusLabel.ZIndex = 2
 StatusLabel.Parent = MainFrame
 
--- Function to create fake toggle buttons
+-- Function to create buttons
 local function createFakeButton(name, text, positionY)
     local Button = Instance.new("TextButton")
     Button.Name = name
@@ -95,7 +94,6 @@ local function createFakeButton(name, text, positionY)
     Button.MouseButton1Click:Connect(function()
         state = not state
         
-        -- Play visual click sound
         local clickSound = Instance.new("Sound")
         clickSound.SoundId = "rbxassetid://12221967"
         clickSound.Volume = 0.5
@@ -117,7 +115,6 @@ local function createFakeButton(name, text, positionY)
             StatusLabel.TextColor3 = Color3.fromRGB(255, 85, 85)
         end
         
-        -- Reset status text color back to neutral after 2 seconds
         task.delay(2, function()
             if StatusLabel.Text ~= "System Status: Idle" then
                 StatusLabel.TextColor3 = Color3.fromRGB(150, 150, 150)
@@ -126,11 +123,10 @@ local function createFakeButton(name, text, positionY)
     end)
 end
 
--- Create the two requested option buttons
 createFakeButton("FreezeButton", "Freeze Trade", 60)
 createFakeButton("AcceptButton", "Force Accept", 120)
 
--- Close Button (To remove the prank GUI safely)
+-- Close Button
 local CloseButton = Instance.new("TextButton")
 CloseButton.Name = "CloseButton"
 CloseButton.Size = UDim2.new(0, 30, 0, 30)
@@ -147,16 +143,17 @@ CloseButton.MouseButton1Click:Connect(function()
     ScreenGui:Destroy()
 end)
 
--- Sparking Background Loop (Rapid White & Black Shift)
+-- Smooth Mono Sparkle/Glow Animation Loop
 task.spawn(function()
     while ScreenGui.Parent do
-        BackgroundAnim.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-        task.wait(0.08)
-        BackgroundAnim.BackgroundColor3 = Color3.fromRGB(15, 15, 15)
-        task.wait(0.12)
-        BackgroundAnim.BackgroundColor3 = Color3.fromRGB(200, 200, 200)
-        task.wait(0.05)
-        BackgroundAnim.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
-        task.wait(0.15)
+        local tweenInfo = TweenInfo.new(0.4, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+        
+        local tweenToWhite = TweenService:Create(BackgroundAnim, tweenInfo, {BackgroundColor3 = Color3.fromRGB(60, 60, 60)})
+        tweenToWhite:Play()
+        tweenToWhite.Completed:Wait()
+        
+        local tweenToBlack = TweenService:Create(BackgroundAnim, tweenInfo, {BackgroundColor3 = Color3.fromRGB(15, 15, 15)})
+        tweenToBlack:Play()
+        tweenToBlack.Completed:Wait()
     end
 end)
